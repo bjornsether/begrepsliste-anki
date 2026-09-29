@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Begrepsliste til Anki</title>
+<meta name="description" content="Gjør den utfylte begrepslisten din om til Anki-kort. Alt skjer i nettleseren – filen lastes ikke opp noe sted.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='6' width='22' height='16' rx='3' fill='%232847b8'/%3E%3Crect x='8' y='10' width='22' height='16' rx='3' fill='%23fff' stroke='%232847b8' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: én smal kolonne med fire nummererte steg (en reell rekkefølge), kortforhåndsvisning som eneste «objekt» med kortstil. */
+:root {
+  --paper: #f5f6f8;
+  --surface: #ffffff;
+  --ink: #18202b;
+  --muted: #5d6877;
+  --line: #d8dde4;
+  --accent: #2847b8;
+  --accent-ink: #ffffff;
+  --accent-soft: #e6ebfb;
+  --ok: #1d7a4f;
+  --warn: #9a5b00;
+  --warn-soft: #fbf1e1;
+  --card: #fbfaf7;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161c; --surface: #1a2029; --ink: #e7eaef; --muted: #9aa5b3; --line: #2e3744;
+    --accent: #8ea6ff; --accent-ink: #0d1330; --accent-soft: #1f2a4d; --ok: #5fcf97; --warn: #f0b561; --warn-soft: #2e2415;
+    --card: #1e242d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161c; --surface: #1a2029; --ink: #e7eaef; --muted: #9aa5b3; --line: #2e3744;
+  --accent: #8ea6ff; --accent-ink: #0d1330; --accent-soft: #1f2a4d; --ok: #5fcf97; --warn: #f0b561; --warn-soft: #2e2415;
+  --card: #1e242d; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 17px/1.55 var(--body);
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(32px, env(safe-area-inset-bottom, 0px));
+}
+.wrap { max-width: 46rem; margin: 0 auto; display: grid; gap: 2.25rem; padding-block: 1.5rem 2rem; }
+h1, h2 { font-family: var(--display); font-weight: 700; line-height: 1.12; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 6vw, 2.9rem); letter-spacing: -0.02em; }
+h1 .arrow { color: var(--accent); }
+h2 { font-size: 1.35rem; display: flex; gap: 0.6rem; align-items: baseline; }
+.step-no { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--accent); letter-spacing: 0.04em; }
+p { margin: 0; max-width: 65ch; }
+.lede { display: grid; gap: 0.75rem; }
+.lede p { color: var(--muted); font-size: 1.08rem; }
+.eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.privacy { display: inline-flex; gap: 0.5rem; align-items: center; font-size: 0.95rem; color: var(--ok); }
+.privacy svg { flex: none; }
+section { display: grid; gap: 1rem; }
+.muted { color: var(--muted); }
+a { color: var(--accent); }
+kbd { font-family: var(--mono); font-size: 0.85em; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 0.3em; background: var(--surface); }
+
+.drop {
+  border: 2px dashed var(--line); border-radius: 14px; background: var(--surface);
+  padding: 1.6rem 1.2rem; display: grid; gap: 0.6rem; justify-items: center; text-align: center;
+  transition: border-color .15s, background .15s; cursor: pointer;
+}
+.drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.drop:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.drop strong { font-size: 1.1rem; }
+.drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.btn {
+  font: 600 1rem/1 var(--body); border-radius: 10px; padding: 0.8rem 1.2rem; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+}
+.btn:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.or { display: grid; gap: 0.5rem; }
+textarea {
+  width: 100%; min-height: 4.2rem; resize: vertical; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--surface); color: var(--ink); font: 0.95rem/1.4 var(--body); padding: 0.7rem 0.8rem;
+}
+.hint { font-size: 0.93rem; color: var(--muted); }
+
+.status { border-radius: 10px; padding: 0.8rem 1rem; font-size: 0.97rem; }
+.status.err { background: var(--warn-soft); color: var(--warn); }
+.status.ok { background: var(--accent-soft); color: var(--ink); }
+
+.summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+.stat { border-top: 2px solid var(--ink); padding-top: 0.4rem; }
+.stat b { display: block; font-family: var(--display); font-size: 1.8rem; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.88rem; color: var(--muted); }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th, td { text-align: left; padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 0.85rem; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 0.9rem; white-space: nowrap; }
+.pill { display: inline-block; font-family: var(--mono); font-size: 0.78rem; padding: 0.05rem 0.45rem; border-radius: 999px; background: var(--warn-soft); color: var(--warn); }
+details { border: 1px solid var(--line); border-radius: 10px; padding: 0.6rem 0.9rem; background: var(--surface); }
+details summary { cursor: pointer; font-weight: 600; }
+details ul { margin: 0.6rem 0 0; padding-left: 1.2rem; columns: 2 16rem; font-size: 0.93rem; }
+
+.opts { display: grid; gap: 0.9rem; }
+.field { display: grid; gap: 0.3rem; }
+.field label { font-weight: 600; }
+.field input[type="text"] {
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink);
+  font: 1rem var(--body); padding: 0.6rem 0.75rem; max-width: 24rem; width: 100%;
+}
+.check { display: flex; gap: 0.6rem; align-items: flex-start; }
+.check input { margin-top: 0.3rem; width: 1.1rem; height: 1.1rem; accent-color: var(--accent); }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+
+.preview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; }
+.face { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem; box-shadow: 0 1px 2px rgba(0,0,0,.06); min-width: 0; display: grid; gap: 0.5rem; align-content: start; }
+.face .lbl { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.face .tema { font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.face .begrep { font-family: var(--display); font-size: 1.25rem; font-weight: 700; line-height: 1.2; }
+.face .def { font-size: 0.97rem; overflow-wrap: anywhere; }
+.face .kilde { font-size: 0.85rem; color: var(--muted); }
+.example-tag { font-size: 0.85rem; color: var(--muted); }
+
+.howto { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.howto div { display: grid; gap: 0.35rem; align-content: start; min-width: 0; }
+.howto h3 { margin: 0; font-size: 1rem; font-family: var(--display); }
+.howto ol { margin: 0; padding-left: 1.1rem; font-size: 0.95rem; display: grid; gap: 0.25rem; }
+.note { border-left: 3px solid var(--accent); padding: 0.2rem 0 0.2rem 0.9rem; }
+footer { font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 1rem; }
+
+@media (max-width: 640px) {
+  .preview, .howto { grid-template-columns: 1fr; }
+  .summary { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+  .stat b { font-size: 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="lede">
+    <span class="eyebrow">EXPH0400 · Examen philosophicum</span>
+    <h1>Begrepsliste <span class="arrow">→</span> Anki</h1>
+    <p>Gjør den utfylte begrepslisten din om til flashcards i Anki. Hvert begrep du har skrevet en definisjon til, blir ett kort, sortert i én kortstokk per uke.</p>
+    <span class="privacy">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1 2.5 3v4.2c0 3.4 2.3 6.4 5.5 7.8 3.2-1.4 5.5-4.4 5.5-7.8V3L8 1Zm-1 9.6L4.6 8.2l1-1L7 8.6l3.4-3.4 1 1L7 10.6Z"/></svg>
+      Filen din lastes ikke opp noe sted. Alt skjer i nettleseren din.
+    </span>
+  </header>
+
+  <section aria-labelledby="s1">
+    <h2 id="s1"><span class="step-no">1</span> Velg begrepslisten din</h2>
+    <label class="drop" id="drop" for="file">
+      <strong>Slipp Word-filen her, eller klikk for å velge</strong>
+      <span class="hint">.docx-fil (Word). Bruker du Google Docs: <em>Fil → Last ned → Microsoft Word (.docx)</em>.</span>
+      <input type="file" id="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+    </label>
+    <div class="or">
+      <label for="paste" class="hint">…eller åpne dokumentet, marker alt (<kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>A</kbd>), kopier (<kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>C</kbd>) og lim inn her:</label>
+      <textarea id="paste" placeholder="Lim inn hele begrepslisten her"></textarea>
+    </div>
+    <div id="status" class="status" hidden></div>
+  </section>
+
+  <section aria-labelledby="s2">
+    <h2 id="s2"><span class="step-no">2</span> Sjekk hva som ble funnet</h2>
+    <div id="empty-state" class="muted">Når du har valgt filen, ser du her hvor mange begreper som blir til kort, og hvilke som mangler definisjon.</div>
+    <div id="result" hidden>
+      <div class="summary">
+        <div class="stat"><b id="n-cards">0</b><span>begreper blir kort</span></div>
+        <div class="stat"><b id="n-weeks">0</b><span>temaer / kortstokker</span></div>
+        <div class="stat"><b id="n-skipped">0</b><span>mangler definisjon</span></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tema</th><th class="num">Kort</th><th class="num">Tomme</th></tr></thead>
+          <tbody id="tema-rows"></tbody>
+        </table>
+      </div>
+      <details id="skipped-box" hidden>
+        <summary>Begreper uten definisjon (hoppes over)</summary>
+        <ul id="skipped-list"></ul>
+      </details>
+    </div>
+  </section>
+
+  <section aria-labelledby="s3">
+    <h2 id="s3"><span class="step-no">3</span> Last ned Anki-filen</h2>
+    <div class="opts">
+      <div class="field">
+        <label for="deck">Navn på kortstokken</label>
+        <input type="text" id="deck" value="EXPH0400 H26" autocomplete="off">
+        <span class="hint">Behold samme navn neste gang, så oppdateres kortene i stedet for at du får en ny kortstokk.</span>
+      </div>
+      <label class="check" for="reverse">
+        <input type="checkbox" id="reverse">
+        <span><strong>Lag også baklengs-kort</strong> (definisjon → begrep)<br><span class="hint">Selve begrepet skjules i definisjonen med […]. Frivillig – gir dobbelt så mange kort.</span></span>
+      </label>
+      <div class="actions">
+        <button class="btn" id="build" disabled>Last ned Anki-fil (.apkg)</button>
+        <span id="build-status" class="hint" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <div class="preview" aria-label="Forhåndsvisning av et kort">
+      <div class="face">
+        <span class="lbl">Forside</span>
+        <span class="tema" id="pv-tema">Argumentasjonsteori (uke 35)</span>
+        <span class="begrep" id="pv-begrep">stråmannsargument</span>
+      </div>
+      <div class="face">
+        <span class="lbl">Bakside</span>
+        <div class="def" id="pv-def">Et argument mot en fremstilling av motpartens syn som er mindre rimelig eller mer ekstremt enn det egentlig er.<br><b>Eks:</b> «Min motstander vil ha fri flyt av narkotika.»</div>
+        <span class="kilde" id="pv-kilde">(Antonsen et al., 2023, s. 27)</span>
+      </div>
+    </div>
+    <span class="example-tag" id="pv-note">Eksempel på hvordan et kort ser ut. Etter at du har valgt filen, vises ditt første kort her.</span>
+  </section>
+
+  <section aria-labelledby="s4">
+    <h2 id="s4"><span class="step-no">4</span> Åpne filen i Anki</h2>
+    <div class="howto">
+      <div>
+        <h3>PC / Mac</h3>
+        <ol>
+          <li>Installer Anki fra <a href="https://apps.ankiweb.net" target="_blank" rel="noopener">apps.ankiweb.net</a> (gratis).</li>
+          <li>Dobbeltklikk på den nedlastede <code>.apkg</code>-filen, eller velg <em>Fil → Importer</em> i Anki.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Android</h3>
+        <ol>
+          <li>Installer AnkiDroid (gratis) fra Google Play.</li>
+          <li>Trykk på den nedlastede filen og velg «Åpne med AnkiDroid».</li>
+        </ol>
+      </div>
+      <div>
+        <h3>iPhone / iPad</h3>
+        <ol>
+          <li>Installer AnkiMobile fra App Store.</li>
+          <li>Åpne filen fra Filer-appen og del den til AnkiMobile.</li>
+        </ol>
+        <span class="hint">AnkiMobile koster penger. Gratis alternativ: importer på en PC og synkroniser via en gratis AnkiWeb-konto.</span>
+      </div>
+    </div>
+    <p class="note">Har du fylt ut flere begreper? Last ned en ny fil og importer den på samme måte. Kort du allerede har, blir oppdatert, nye begreper kommer til, og repetisjonsfremgangen din beholdes.</p>
+  </section>
+
+  <footer>
+    Kortene lages med notetypen «Begrepsliste (begrep → definisjon)» med feltene Begrep, Definisjon, Kilde og Tema. Verktøyet bruker <a href="https://stuk.github.io/jszip/" target="_blank" rel="noopener">JSZip</a> og <a href="https://sql.js.org" target="_blank" rel="noopener">sql.js</a>.
+  </footer>
+</main>
+
+<script src="lib/jszip.min.js"></script>
+<script src="lib/sql-wasm.js"></script>
+<script src="konverter.js"></script>
+<script>
+(function () {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  let parsed = null;
+  let sqlPromise = null;
+  const getSql = () => (sqlPromise ||= initSqlJs({ locateFile: (f) => "lib/" + f }));
+
+  function showStatus(kind, msg) {
+    const el = $("status");
+    el.className = "status " + kind;
+    el.textContent = msg;
+    el.hidden = !msg;
+  }
+
+  function render(res, sourceLabel) {
+    parsed = res;
+    const all = res.entries.concat(res.skipped);
+    if (!all.length) {
+      $("result").hidden = true; $("empty-state").hidden = false; $("build").disabled = true;
+      showStatus("err", "Fant ingen begrepstabeller i " + sourceLabel + ". Sjekk at det er begrepslisten (med tabellene begrep / sidetall / definisjon) du har valgt.");
+      return;
+    }
+    const byTema = new Map();
+    for (const e of all) {
+      if (!byTema.has(e.tema)) byTema.set(e.tema, { ok: 0, empty: 0, nr: e.temaNr });
+    }
+    res.entries.forEach((e) => byTema.get(e.tema).ok++);
+    res.skipped.forEach((e) => byTema.get(e.tema).empty++);
+    $("tema-rows").innerHTML = "";
+    for (const [tema, c] of [...byTema].sort((a, b) => a[1].nr - b[1].nr)) {
+      const tr = document.createElement("tr");
+      const td1 = document.createElement("td"); td1.textContent = tema;
+      const td2 = document.createElement("td"); td2.className = "num"; td2.textContent = c.ok;
+      const td3 = document.createElement("td"); td3.className = "num";
+      if (c.empty) { const s = document.createElement("span"); s.className = "pill"; s.textContent = c.empty; td3.append(s); } else td3.textContent = "–";
+      tr.append(td1, td2, td3);
+      $("tema-rows").append(tr);
+    }
+    $("n-cards").textContent = res.entries.length;
+    $("n-weeks").textContent = new Set(res.entries.map((e) => e.tema)).size;
+    $("n-skipped").textContent = res.skipped.length;
+    $("skipped-list").innerHTML = "";
+    res.skipped.forEach((e) => { const li = document.createElement("li"); li.textContent = e.begrep; $("skipped-list").append(li); });
+    $("skipped-box").hidden = !res.skipped.length;
+    $("result").hidden = false; $("empty-state").hidden = true;
+    $("build").disabled = !res.entries.length;
+    $("build-status").textContent = "";
+
+    if (res.entries.length) {
+      const e = res.entries[0];
+      $("pv-tema").textContent = e.tema;
+      $("pv-begrep").textContent = e.begrep;
+      $("pv-def").innerHTML = e.definisjon; // HTML laget av konverter.js fra brukerens egen fil (escapet tekst + b/i/u/br)
+      $("pv-kilde").textContent = e.kilde;
+      $("pv-note").textContent = "Slik blir det første kortet ditt.";
+      showStatus("ok", "Leste " + sourceLabel + ": " + res.entries.length + " begreper med definisjon.");
+    } else {
+      showStatus("err", "Ingen av begrepene i " + sourceLabel + " har definisjon ennå. Fyll inn definisjonskolonnen og prøv igjen.");
+    }
+  }
+
+  async function handleFile(file) {
+    if (!file) return;
+    if (!/\.docx$/i.test(file.name)) {
+      showStatus("err", "«" + file.name + "» er ikke en .docx-fil. Lagre begrepslisten som Word-dokument (.docx) og prøv igjen.");
+      return;
+    }
+    try {
+      showStatus("ok", "Leser " + file.name + " …");
+      const res = await Konverter.parseDocx(await file.arrayBuffer());
+      render(res, "«" + file.name + "»");
+    } catch (err) {
+      showStatus("err", err.message || String(err));
+    }
+  }
+
+  $("file").addEventListener("change", (ev) => handleFile(ev.target.files[0]));
+  const drop = $("drop");
+  ["dragenter", "dragover"].forEach((t) => drop.addEventListener(t, (ev) => { ev.preventDefault(); drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((t) => drop.addEventListener(t, () => drop.classList.remove("over")));
+  drop.addEventListener("drop", (ev) => { ev.preventDefault(); handleFile(ev.dataTransfer.files[0]); });
+
+  $("paste").addEventListener("paste", (ev) => {
+    const html = ev.clipboardData && ev.clipboardData.getData("text/html");
+    ev.preventDefault();
+    if (!html) {
+      showStatus("err", "Det du limte inn, inneholder ikke tabellene. Kopier direkte fra Word eller Google Docs (ikke fra en PDF), eller last ned dokumentet som .docx.");
+      return;
+    }
+    try {
+      $("paste").value = "Innlimt dokument (" + Math.round(html.length / 1024) + " kB)";
+      render(Konverter.parseHtml(html), "det innlimte dokumentet");
+    } catch (err) { showStatus("err", err.message || String(err)); }
+  });
+
+  $("build").addEventListener("click", async () => {
+    if (!parsed || !parsed.entries.length) return;
+    const btn = $("build");
+    btn.disabled = true;
+    $("build-status").textContent = "Lager filen …";
+    try {
+      const SQL = await getSql();
+      const deckPrefix = $("deck").value.trim() || "Begrepsliste";
+      const out = await Konverter.buildApkg(parsed.entries, { deckPrefix, reverse: $("reverse").checked, courseTag: deckPrefix.split(/\s+/)[0] }, { SQL, JSZip });
+      const blob = new Blob([out.bytes], { type: "application/octet-stream" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = deckPrefix.replace(/[^\p{L}\p{N}]+/gu, "_").replace(/^_|_$/g, "") + "_begreper.apkg";
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+      $("build-status").textContent = "Lastet ned: " + out.cardCount + " kort i " + out.deckCount + " kortstokker. Se steg 4.";
+    } catch (err) {
+      $("build-status").textContent = "Noe gikk galt: " + (err.message || err);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>
