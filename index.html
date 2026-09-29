@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='6' width='22' height='16' rx='3' fill='%232847b8'/%3E%3Crect x='8' y='10' width='22' height='16' rx='3' fill='%23fff' stroke='%232847b8' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@600&display=swap">
 <style>
 /* Layout: én smal kolonne med fire nummererte steg (en reell rekkefølge), kortforhåndsvisning som eneste «objekt» med kortstil. */
 :root {
@@ -24,6 +24,9 @@
   --warn: #9a5b00;
   --warn-soft: #fbf1e1;
   --card: #fbfaf7;
+  --note-bg: #fff4c2;
+  --note-ink: #3b3212;
+  --note-edge: #e3cf72;
   --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
@@ -33,13 +36,13 @@
   :root:not([data-theme="light"]) {
     --paper: #12161c; --surface: #1a2029; --ink: #e7eaef; --muted: #9aa5b3; --line: #2e3744;
     --accent: #8ea6ff; --accent-ink: #0d1330; --accent-soft: #1f2a4d; --ok: #5fcf97; --warn: #f0b561; --warn-soft: #2e2415;
-    --card: #1e242d; color-scheme: dark;
+    --card: #1e242d; --note-bg: #3a331a; --note-ink: #f3e7b5; --note-edge: #6b5d25; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #12161c; --surface: #1a2029; --ink: #e7eaef; --muted: #9aa5b3; --line: #2e3744;
   --accent: #8ea6ff; --accent-ink: #0d1330; --accent-soft: #1f2a4d; --ok: #5fcf97; --warn: #f0b561; --warn-soft: #2e2415;
-  --card: #1e242d; color-scheme: dark;
+  --card: #1e242d; --note-bg: #3a331a; --note-ink: #f3e7b5; --note-edge: #6b5d25; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -55,6 +58,15 @@ h1 .arrow { color: var(--accent); }
 h2 { font-size: 1.35rem; display: flex; gap: 0.6rem; align-items: baseline; }
 .step-no { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--accent); letter-spacing: 0.04em; }
 p { margin: 0; max-width: 65ch; }
+.hilsen {
+  background: var(--note-bg); color: var(--note-ink); border: 1px solid var(--note-edge);
+  border-radius: 4px; padding: 1rem 1.2rem 0.8rem; max-width: 34rem; justify-self: start;
+  transform: rotate(-1.2deg); box-shadow: 0 6px 14px -8px rgba(0,0,0,.35);
+  display: grid; gap: 0.35rem; font-size: 1.05rem;
+}
+.hilsen p { max-width: none; }
+.hilsen .sign { font-family: "Caveat", "Segoe Print", "Bradley Hand", cursive; font-size: 1.6rem; line-height: 1; justify-self: end; }
+@media (prefers-reduced-motion: reduce) { .hilsen { transform: none; } }
 .lede { display: grid; gap: 0.75rem; }
 .lede p { color: var(--muted); font-size: 1.08rem; }
 .eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
@@ -143,6 +155,11 @@ footer { font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--li
 </head>
 <body>
 <main class="wrap">
+
+  <aside class="hilsen" aria-label="Hilsen fra Bjørn">
+    <p>I disse dager kan man bygge en hel nettapp med et par millioner tokens og en stor språkmodell. Beklager den litt KI-aktige utformingen – men jeg håper den er nyttig!</p>
+    <span class="sign">– Bjørn</span>
+  </aside>
 
   <header class="lede">
     <span class="eyebrow">EXPH0400 · Examen philosophicum</span>
